@@ -1,8 +1,7 @@
 package com.model;
 
 public class Card {
-	// Define a class representing a single card in the UNO deck. Each card should
-	// have a color (red, blue, green, or yellow) and a value.
+	//Define a class representing a single card in the UNO deck. Each card should have a color (red, blue, green, or yellow) and a value.
 
 	private CardPattern cardPattern;
 	private Color color;
@@ -15,8 +14,7 @@ public class Card {
 		this.number = number;
 	}
 
-	// Determine if the card is a special action card (e.g., skip, reverse, draw
-	// two).
+	// Determine if the card is a special action card (e.g., skip, reverse, draw two).
 
 	public boolean isSpecialActionCard() {
 		/*
@@ -44,8 +42,7 @@ public class Card {
 		 */
 		return cardPattern == cardPattern.Wild4;
 	}
-
-//Get and set the cardPattern of the card.
+//Get and set the cardPattern  of the card.
 	public CardPattern getCardPattern() {
 		return cardPattern;
 	}

@@ -2,11 +2,13 @@ package com.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import com.model.Card;
 import com.model.CardPattern;
+import com.model.Color;
 import com.model.Deck;
-import com.model.Direction;
+
 import com.model.Player;
 
 public class Game {
@@ -21,11 +23,11 @@ public class Game {
 
 	public Game(List<Player> players) {
 		this.players = players;
-		deck = new Deck();
-		currentPlayerIndex = 0;
-		direction = 1;
-		currentCard = null;
-		winner = null;
+		this.deck = new Deck();
+		this.currentPlayerIndex = 0;
+		this.direction = 1;
+		this.currentCard = null;
+		this.winner = null;
 	}
 // Start the game by initializing the deck, distributing cards to players, and determining the first player.
 
@@ -47,6 +49,8 @@ public class Game {
 
 		// Set the current card and start the game.
 		currentCard = firstCard;
+		System.out.println("CurrentCard that going to start the game :-" + currentCard.getCardPattern() + "  :-   "
+				+ currentCard.getColor());
 	}
 
 	// Handle the order of turns, taking into account skips and reverses
@@ -100,7 +104,7 @@ public class Game {
 
 		// Check if the played card is a valid card based on the current card in play.
 		Card playedCard = players.get(playerIndex).playCardWithTheirHand(cardIndex);
-		if (playedCard.getColor() != currentCard.getColor() && playedCard.getNumber() != currentCard.getNumber()
+		if (playedCard.getColor() != currentCard.getColor()&& playedCard.getNumber() != currentCard.getNumber() && !playedCard.isSpecialActionCard()
 				&& !playedCard.isSpecialWildActionCards()) {
 			// If not, return the card to the player's hand and return false.
 			players.get(playerIndex).getHand().add(playedCard);
@@ -111,15 +115,20 @@ public class Game {
 		currentCard = playedCard;
 		if (currentCard.getCardPattern() == CardPattern.Reverse) {
 			direction *= -1;
-		} else if (currentCard.isSpecialWildActionCards()) {
-			// TODO: Allow the player to choose the color.
-		}
+		} else if (currentCard.isSpecialActionCard()&&currentCard.getCardPattern().values()[0]==CardPattern.Wild) {
+			Scanner scanner = new Scanner(System.in);
+	        System.out.print("Choose a color (Red, Blue, Green, Yellow): ");
+	        String color = scanner.nextLine();
+	        currentCard.setColor(Color.valueOf(color));
+		}else if (currentCard.isSpecialActionCard()&&currentCard.getCardPattern().values()[0]==CardPattern.Draw2) {
+			 int nextPlayerIndex = (currentPlayerIndex + players.size() + direction) % players.size();
+		        for (int i = 0; i < 2; i++) players.get(nextPlayerIndex).drawCardFromDeck(deck);
+		}else if (currentCard.isSpecialActionCard()&&currentCard.getCardPattern().values()[0]==CardPattern.Skip) {
+	        int nextPlayerIndex = (currentPlayerIndex + players.size() + direction) % players.size();
+	        currentPlayerIndex = nextPlayerIndex;
+	    }
 
 		// Check for win conditions.such as a player running out of cards.
-		if (players.get(playerIndex).getHand().isEmpty()) {
-			// TODO: Declare a winner and end the game.
-		}
-
 		// Check for win conditions.
 		if (players.get(playerIndex).getHand().isEmpty()) {
 			winner = players.get(playerIndex);
@@ -140,6 +149,42 @@ public class Game {
 
 	public int getCurrentPlayerIndex() {
 		return currentPlayerIndex;
+	}
+
+	public List<Player> getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(List<Player> players) {
+		this.players = players;
+	}
+
+	public Deck getDeck() {
+		return deck;
+	}
+
+	public void setDeck(Deck deck) {
+		this.deck = deck;
+	}
+
+	public int getDirection() {
+		return direction;
+	}
+
+	public void setDirection(int direction) {
+		this.direction = direction;
+	}
+
+	public void setWinner(Player winner) {
+		this.winner = winner;
+	}
+
+	public Card getCurrentCard() {
+		return currentCard;
+	}
+
+	public void setCurrentCard(Card currentCard) {
+		this.currentCard = currentCard;
 	}
 
 	private Player getPlayerById(String id) {
